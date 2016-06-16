@@ -1,0 +1,101 @@
+package com.samofan.denys.battleplane.components;
+
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
+
+import com.samofan.denys.battleplane.main.GameObject;
+import com.samofan.denys.battleplane.main.GamePanel;
+
+public class Player extends GameObject {
+    private Bitmap spritesheet;
+    private int score;
+    private boolean  up;
+    private boolean playing;
+    private GameAnim animation = new GameAnim();
+    private long startTime;
+
+    public Player(Bitmap res, int w, int h, int numframes)
+    {
+        x = 100;
+        y = GamePanel.HEIGHT/2;
+        dy = 0;
+        score = 0;
+        height = h;
+        width = w;
+
+        Bitmap[] image = new Bitmap[numframes];
+
+
+        spritesheet = res;
+
+
+
+
+        for(int i = 0; i<image.length;i++)
+        {
+            image[i] = Bitmap.createBitmap(spritesheet, i*width, 0, width, height);
+
+        }
+
+
+        animation.setFrames(image);
+        animation.setDelay(10);
+        startTime = System.nanoTime();
+    }
+
+    public void setUp(boolean b){up = b;}
+
+
+    public void update()
+    {
+
+
+
+        long elapsed = (System.nanoTime() - startTime)/1000000;
+
+        if (elapsed>100)
+        {
+            score++;
+            startTime = System.nanoTime();
+        }
+
+        animation.update();
+
+        if (up) {
+            dy -= 1;
+        } else {
+            dy += 1;
+
+        }
+
+
+
+        //just to make sure copter is not moving so fast that it passes through missile
+
+        if (dy > 10) dy = 10;
+        if (dy < -10) dy = -10;
+
+
+        y += dy*2;
+
+
+
+
+    }
+    public void draw(Canvas canvas)
+    {
+
+        canvas.drawBitmap(animation.getImage(), x, y, null);
+
+
+
+    }
+
+    public int getScore(){return score;}
+    public boolean getPlaying() {return playing;}
+    public void setPlaying(boolean b){playing = b;}
+    public void resetDY(){dy=0;}
+    public void resetScore(){score = 000;}
+    public boolean getUp(){return up;}
+
+}
